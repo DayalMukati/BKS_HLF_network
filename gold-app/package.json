@@ -1,0 +1,20 @@
+{
+  "name": "BKS-Gold",
+  "version": "1.0.0",
+  "description": "Blockchain Based Gold App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Blockchain Based Gold App"
+  ],
+  "author": "Dayal Mukati",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "fabric-ca-client": "^2.2.6",
+    "fabric-network": "^2.2.6",
+    "joi": "^17.4.0"
+  }
+}
