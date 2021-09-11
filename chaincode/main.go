@@ -1,23 +1,20 @@
 package main
 
 import (
+	"log"
 	"gold-application-chaincode/contracts"
-
-	// "simple-payment-application-chaincode/contracts"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
 func main() {
-	goldContract := new(contracts.GoldContract)
 
-	cc, err := contractapi.NewChaincode(goldContract)
-
+	goldContract, err := contractapi.NewChaincode(&contracts.GoldContract{})
 	if err != nil {
-		panic(err.Error())
+		log.Panicf("Error creating gold chaincode: %v", err)
 	}
 
-	if err := cc.Start(); err != nil {
-		panic(err.Error())
+	if err := goldContract.Start(); err != nil {
+		log.Panicf("Error starting gold chaincode: %v", err)
 	}
 }
