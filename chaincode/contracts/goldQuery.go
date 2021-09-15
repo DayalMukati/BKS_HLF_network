@@ -29,26 +29,15 @@ func (spc *GoldContract) GetMetal(ctx contractapi.TransactionContextInterface, i
 	return &metal, err
 }
 
-// Get record by ID
-func (spc *GoldContract) GetbyId(ctx contractapi.TransactionContextInterface, id string, docType string) (string, error) {
-	queryString := fmt.Sprintf(`{"selector":{"docType":"%s","Id":"%s"}}`, docType, id)
-	return GetQueryResultAsString(ctx, queryString)
-}
 
-// Get all records by docType
-func (spc *GoldContract) GetAll(ctx contractapi.TransactionContextInterface, docType string) (string, error) {
-	queryString := fmt.Sprintf(`{"selector":{"docType":"%s"}}`, docType)
-	return GetQueryResultAsString(ctx, queryString)
-}
-
-//GetQueryResultAsString - Return result for given query
-func GetQueryResultAsString(ctx contractapi.TransactionContextInterface, queryString string) (string, error) {
+//GetQueryResult - Return result for given query
+func (spc *GoldContract) GetQueryResult(ctx contractapi.TransactionContextInterface, queryString string) ([]byte, error) {
 
 	fmt.Printf("- getQueryResultAsString queryString:\n%s\n", queryString)
 
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer resultsIterator.Close()
 
@@ -60,7 +49,7 @@ func GetQueryResultAsString(ctx contractapi.TransactionContextInterface, querySt
 	for resultsIterator.HasNext() {
 		queryResponse, err := resultsIterator.Next()
 		if err != nil {
-			return "", fmt.Errorf(err.Error())
+			return nil, fmt.Errorf(err.Error())
 		}
 		fmt.Println("=======inside loop======")
 		fmt.Println(queryResponse)
@@ -79,5 +68,5 @@ func GetQueryResultAsString(ctx contractapi.TransactionContextInterface, querySt
 
 	fmt.Printf("getQueryResultAsString queryResult:\n%s\n", buffer.String())
 
-	return buffer.String(), nil
+	return buffer.Bytes(), nil
 }
