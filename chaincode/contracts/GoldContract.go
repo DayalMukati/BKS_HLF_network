@@ -87,7 +87,6 @@ func (spc *GoldContract) AddMetal(ctx contractapi.TransactionContextInterface, n
 	return &metal, nil
 }
 
-
 //Add new Metal Group
 func (spc *GoldContract) AddMetalGroup(ctx contractapi.TransactionContextInterface, metalId string, karatage string, fineness int, referenceId int, shortName string) (*Metalgroup, error) {
 
@@ -116,9 +115,6 @@ func (spc *GoldContract) AddMetalGroup(ctx contractapi.TransactionContextInterfa
 	if err != nil {
 		return nil, err
 	}
-	// metalArray = append(metalArray, *metal)
-
-
 	//defince structs
 	metalGroup := Metalgroup{
 		DocType:           		"MetalGroup",
@@ -128,6 +124,7 @@ func (spc *GoldContract) AddMetalGroup(ctx contractapi.TransactionContextInterfa
 		Karatage:				karatage,
 		Fineness:				fineness,
 		ReferenceId:			referenceId,
+		Status:					"Active",
 	}
 
 	//convert Golang to jSon format (JSON Byte Array)
@@ -144,6 +141,58 @@ func (spc *GoldContract) AddMetalGroup(ctx contractapi.TransactionContextInterfa
 
 	count += 1
 	return &metalGroup, nil
+}
+
+//CyclePeriod:
+type CyclePeriod struct {
+	DocType					string 		`json:"docType"`
+	Name 					string		`json:"name"`
+	Id						string		`json:"Id"`
+	Graceperiod				int			`json:"graceperiod"`
+	MinWeight				int			`json:"minWeight"`
+	MinValue				int			`json:"minValue"`
+	Status					string		`json:"status"`
+}
+
+//Add Cycle Period
+func (spc *GoldContract) AddCyclePeriod(ctx contractapi.TransactionContextInterface, name string, graceperiod int, minWeight int, minValue int, status string) (*CyclePeriod, error) {
+
+	id, _ := contract.IDGenerator("cyc", name, count)
+	cycleBytes, err := ctx.GetStub().GetState(id)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to read data from world state: %v", err)
+	}
+	//check if ID already exists (return the state of the ID by checking the world state)
+	if cycleBytes != nil {
+		return nil, fmt.Errorf("the cycle period already exists %s", name)
+	}
+
+	//defince structs
+	cycleperiod := CyclePeriod{
+		DocType:           "CyclePeriod",
+		Id:		    		id,
+		Name:         		name,
+		Graceperiod: 		graceperiod,
+		MinWeight: 			minWeight,
+		MinValue: 			minValue,
+		Status:				status,
+	}
+
+	//convert Golang to jSon format (JSON Byte Array)
+	cycleBytes, err = json.Marshal(cycleperiod)
+	if err != nil {
+		return nil, err
+	}
+
+	//put cycle period data unto the Ledger (key value pair)
+	err = ctx.GetStub().PutState(id, cycleBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	count += 1
+	return &cycleperiod, nil
 }
 
 
@@ -423,15 +472,6 @@ type FlexiPlan struct {
 
 }
 
-//CyclePeriod:
-
-type CyclePeriod struct {
-	DocType					string 		`json:"docType"`
-	Name 					string		`json:"name"`
-	Graceperiod				string		`json:"graceperiod"`
-	MinWeight				string		`json:"minWeight"`
-	MinValue				string		`json:"minValue"`
-}
 
 // Helper function
 func (spc *GoldContract) IDGenerator(doctype string, name string, count int) (string, error) {
