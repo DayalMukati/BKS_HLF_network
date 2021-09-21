@@ -146,3 +146,129 @@ func (spc *GoldContract) UpdateCyclePeriod(ctx contractapi.TransactionContextInt
 	count += 1
 	return &cycleperiod, nil
 }
+
+//Update Product
+func (spc *GoldContract) UpdateProduct(ctx contractapi.TransactionContextInterface, productId string, name string, imagePath string, videoPath string) (*Product, error) {
+
+	var product Product
+	productBytes, err := ctx.GetStub().GetState(productId)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to read data from world state: %v", err)
+	}
+	//check if ID already exists (return the state of the ID by checking the world state)
+	if productBytes == nil {
+		return nil, fmt.Errorf("the product doesn't exists %s", name)
+	}
+
+	err = json.Unmarshal(productBytes, &product)
+	if err != nil {
+		return nil, err
+	}
+
+	product.Name = name
+	product.ImagePath = imagePath
+	product.VideoPath = videoPath
+	
+
+	//convert Golang to jSon format (JSON Byte Array)
+	productBytes, err = json.Marshal(product)
+	if err != nil {
+		return nil, err
+	}
+
+	//put product data unto the Ledger (key value pair)
+	err = ctx.GetStub().PutState(productId, productBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	count += 1
+	return &product, nil
+}
+
+//Update Collection
+func (spc *GoldContract) UpdateCollection(ctx contractapi.TransactionContextInterface, collectionId string, collection_name string, img1Path string, img2Path string, img3Path string, videoPath string, status string) (*Collection, error) {
+
+	var collection Collection
+	collectionBytes, err := ctx.GetStub().GetState(collectionId)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to read data from world state: %v", err)
+	}
+	//check if ID already exists (return the state of the ID by checking the world state)
+	if collectionBytes == nil {
+		return nil, fmt.Errorf("the collection doesn't exists %s", collection_name)
+	}
+
+	err = json.Unmarshal(collectionBytes, &collection)
+	if err != nil {
+		return nil, err
+	}
+
+	collection.CollectionName = collection_name
+	collection.Img1path = img1Path
+	collection.Img2path = img2Path
+	collection.Img3path = img3Path
+	collection.VideoPath = videoPath
+	collection.Status = status
+	
+
+	//convert Golang to jSon format (JSON Byte Array)
+	collectionBytes, err = json.Marshal(collection)
+	if err != nil {
+		return nil, err
+	}
+
+	//put collection data unto the Ledger (key value pair)
+	err = ctx.GetStub().PutState(collectionId, collectionBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	count += 1
+	return &collection, nil
+}
+
+//Update Category
+func (spc *GoldContract) UpdateCategory(ctx contractapi.TransactionContextInterface, categoryId string, category_name string, img1Path string, img2Path string, img3Path string, videoPath string, status string) (*Category, error) {
+
+	var category Category
+	categoryBytes, err := ctx.GetStub().GetState(categoryId)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to read data from world state: %v", err)
+	}
+	//check if ID already exists (return the state of the ID by checking the world state)
+	if categoryBytes == nil {
+		return nil, fmt.Errorf("the category doesn't exists %s", category_name)
+	}
+
+	err = json.Unmarshal(categoryBytes, &category)
+	if err != nil {
+		return nil, err
+	}
+
+	category.CategoryName = category_name
+	category.Img1path = img1Path
+	category.Img2path = img2Path
+	category.Img3path = img3Path
+	category.VideoPath = videoPath
+	category.Status = status
+	
+
+	//convert Golang to jSon format (JSON Byte Array)
+	categoryBytes, err = json.Marshal(category)
+	if err != nil {
+		return nil, err
+	}
+
+	//put category data unto the Ledger (key value pair)
+	err = ctx.GetStub().PutState(categoryId, categoryBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	count += 1
+	return &category, nil
+}
