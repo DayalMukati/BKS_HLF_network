@@ -12,7 +12,7 @@ import (
 
 // // Get record by ID
 func (spc *GoldContract) GetbyId(ctx contractapi.TransactionContextInterface, id string, docType string) (string, error) {
-	queryString := fmt.Sprintf(`{"selector":{"docType":"%s","Id":"%s"}}`, docType, id)
+	queryString := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, docType, id)
 	return GetQueryResultAsString(ctx, queryString)
 }
 

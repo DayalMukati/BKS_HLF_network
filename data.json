@@ -1,1 +1,30 @@
 "{\"docType\":\"Diamond\",\"Id\":\"diamcirc4\",\"shape\":\"circular shaped\",\"gemstones\":\"2\",\"clarity\":\"ok\",\"color\":\"NavyBlue\",\"cut\":\"good\",\"CertifiyAuthority\":\"Develop\",\"status\":\"active\",\"variety_id\":\"Varisamp2\",\"category_id\":\"collSamp1\",\"collection_id\":\"cateSamp3\",\"varieties\":[{\"docType\":\"Variety\",\"Id\":\"Varisamp2\",\"varietyName\":\"sample dev variety\",\"img1path\":\"abc.com\",\"img2path\":\"\",\"img3path\":\"\",\"videoPath\":\"google.com\"}],\"categories\":[],\"collections\":[{\"docType\":\"Collection\",\"Id\":\"collSamp1\",\"collectionName\":\"Sample_collection_dev\",\"img1path\":\"abc.com\",\"img2path\":\"\",\"img3path\":\"\",\"videoPath\":\"google.com\",\"status\":\"active\"}]}"
+
+
+
+
+[{
+    MetalGroup 614b6497e4e38797e304cdfd[] 614b4b228d9d6797885b8b5e 14 KT 999.9 1 14 KT Active
+} {
+    MetalGroup 614b6636e4e38797e304cdfe[{
+        Metal 614b4b228d9d6797885b8b5e gold
+    }] 614 b4b228d9d6797885b8b5e 24 KT 999.9 1 24 KT Active
+}]
+
+
+
+"ItemID": "ItemObjectID",                //Selected Item ID which gives Item images and videos and name also while fetching
+"MetalGroupID": "metalgroupObjectID",  //24KT or 22KT or 18KT or 14KT or 10KT
+"DiamondstoneID": "DiamondObjectID",     //Diamond if avaialble in jewelery it is selected otherwise null
+"CollectionID":"CollectionObjectID",   
+"categoryID": "CategoryObjectID",
+"VarietyID":"varietyObjectID",
+"charges": ["calcID"],                  //GST, miniting, making depends on item to item admin selectes
+"ProductID": "ProductObjectID",      
+"GrossWeight": number                   //10
+"ItemDescription": String 
+"SKU": String
+"numberofUnits": String                 //avaialble stock
+"RingSizeBangleSize": String            
+"Measurements": String                  
+}

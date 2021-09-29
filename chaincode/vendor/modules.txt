@@ -52,6 +52,8 @@ github.com/joho/godotenv
 github.com/mailru/easyjson/buffer
 github.com/mailru/easyjson/jlexer
 github.com/mailru/easyjson/jwriter
+# github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
+## explicit
 # github.com/rogpeppe/go-internal v1.3.0
 github.com/rogpeppe/go-internal/modfile
 github.com/rogpeppe/go-internal/module

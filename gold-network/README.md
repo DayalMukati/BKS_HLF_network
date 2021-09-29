@@ -22,7 +22,7 @@ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.exa
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C goldchannel -n iac $PEER_CONN_PARAMS -c '{"function":"AddMetal","Args":["Gold","abc.com"]}'
 
 ## Create Metal Group
-peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C goldchannel -n iac $PEER_CONN_PARAMS -c '{"function":"AddMetalGroup","Args":["metGol0","24k","99","1","24KT"]}'
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C goldchannel -n iac $PEER_CONN_PARAMS -c '{"function":"AddMetalGroup","Args":["metGol6","24k","99","1","24KT"]}'
 
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C goldchannel -n iac $PEER_CONN_PARAMS -c '{"function":"GetbyId","Args":["metGol0","Metal"]}'
 
