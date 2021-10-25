@@ -20,7 +20,7 @@ type GoldContract struct {
 
 // var dtformated string
 var dt = time.Now()
-var dtformated = dt.Format("2006.01.02 15:04:05")
+var dtformated = dt.Format("2006-01-02T15:04:05Z")
 
 //Metal
 type Metal struct {
@@ -28,8 +28,8 @@ type Metal struct {
 	Id           string `json:"id"`
 	Name         string `json:"name"`
 	Icon         string `json:"icon"`
-	CreatedDate  string `json:"createdDate"`
-	ModifiedDate string `json:"modifiedDate"`
+	CreatedAt  string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 // MetalGroup : The asset being tracked on the chain
@@ -43,8 +43,8 @@ type Metalgroup struct {
 	ReferenceId  int     `json:"referenceId"`
 	ShortName    string  `json:"shortName"`
 	Status       string  `json:"status"`
-	CreatedDate  string  `json:"createdDate"`
-	ModifiedDate string  `json:"modifiedDate"`
+	CreatedAt  string  `json:"createdAt"`
+	UpdatedAt string  `json:"updatedAt"`
 }
 
 var contract GoldContract
@@ -64,9 +64,10 @@ func (spc *GoldContract) AddMetal(ctx contractapi.TransactionContextInterface, m
 
 	var metal Metal
 	err := json.Unmarshal([]byte(metalData), &metal)
-
+	fmt.Println(metalData,"67")
+	fmt.Println(metal,"68")
 	metalBytes, err := ctx.GetStub().GetState(metal.Id)
-
+	fmt.Println(metalBytes, "line 70")
 	if err != nil {
 		return nil, fmt.Errorf("failed to read data from world state: %v", err)
 	}
@@ -76,8 +77,8 @@ func (spc *GoldContract) AddMetal(ctx contractapi.TransactionContextInterface, m
 	}
 
 	metal.DocType = "Metal"
-	metal.CreatedDate = dtformated
-	metal.ModifiedDate = dtformated
+	metal.CreatedAt = dtformated
+	metal.UpdatedAt = dtformated
 
 	//convert Golang to jSon format (JSON Byte Array)
 	metalBytes, err = json.Marshal(metal)
@@ -90,7 +91,7 @@ func (spc *GoldContract) AddMetal(ctx contractapi.TransactionContextInterface, m
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println(metal, "new metal created")
 	return &metal, nil
 }
 
@@ -132,8 +133,8 @@ func (spc *GoldContract) AddMetalGroup(ctx contractapi.TransactionContextInterfa
 	metalGroup.DocType = "MetalGroup"
 	metalGroup.Status = "Active"
 	metalGroup.Metals = metalArray
-	metalGroup.CreatedDate = dtformated
-	metalGroup.ModifiedDate = dtformated
+	metalGroup.CreatedAt = dtformated
+	metalGroup.UpdatedAt = dtformated
 
 	//convert Golang to jSon format (JSON Byte Array)
 	metalgroupBytes, err = json.Marshal(metalGroup)
@@ -159,8 +160,8 @@ type CyclePeriod struct {
 	MinWeight    int    `json:"minWeight"`
 	MinValue     int    `json:"minValue"`
 	Status       string `json:"status"`
-	CreatedDate  string `json:"createdDate"`
-	ModifiedDate string `json:"modifiedDate"`
+	CreatedAt  string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 //Add Cycle Period
@@ -186,8 +187,8 @@ func (spc *GoldContract) AddCyclePeriod(ctx contractapi.TransactionContextInterf
 
 	cycleperiod.DocType = "CyclePeriod"
 	cycleperiod.Status = "Active"
-	cycleperiod.CreatedDate = dtformated
-	cycleperiod.ModifiedDate = dtformated
+	cycleperiod.CreatedAt = dtformated
+	cycleperiod.UpdatedAt = dtformated
 
 	//convert Golang to jSon format (JSON Byte Array)
 	cycleBytes, err = json.Marshal(cycleperiod)
@@ -209,10 +210,10 @@ type Product struct {
 	DocType      string `json:"docType"`
 	Id           string `json:"id"`
 	Name         string `json:"name"`
-	ImagePath    string `json:"imagePath"`
-	VideoPath    string `json:"videoPath"`
-	CreatedDate  string `json:"createdDate"`
-	ModifiedDate string `json:"modifiedDate"`
+	Images    string `json:"images"`
+	Video    string `json:"video"`
+	CreatedAt  string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 //Add new Product
@@ -237,8 +238,8 @@ func (spc *GoldContract) AddProduct(ctx contractapi.TransactionContextInterface,
 	}
 
 	product.DocType = "Product"
-	product.CreatedDate = dtformated
-	product.ModifiedDate = dtformated
+	product.CreatedAt = dtformated
+	product.UpdatedAt = dtformated
 
 	//convert Golang to jSon format (JSON Byte Array)
 	productBytes, err = json.Marshal(product)
@@ -265,8 +266,8 @@ type Collection struct {
 	Img3           string `json:"img3"`
 	Video          string `json:"video"`
 	Status         string `json:"status"`
-	CreatedDate    string `json:"createdDate"`
-	ModifiedDate   string `json:"modifiedDate"`
+	CreatedAt    string `json:"createdAt"`
+	UpdatedAt   string `json:"updatedAt"`
 }
 
 //Add new collection
@@ -292,8 +293,8 @@ func (spc *GoldContract) AddCollection(ctx contractapi.TransactionContextInterfa
 
 	collection.DocType = "Collection"
 	collection.Status = "Active"
-	collection.CreatedDate = dtformated
-	collection.ModifiedDate = dtformated
+	collection.CreatedAt = dtformated
+	collection.UpdatedAt = dtformated
 
 	//convert Golang to jSon format (JSON Byte Array)
 	collectionBytes, err = json.Marshal(collection)
@@ -320,8 +321,8 @@ type Category struct {
 	Img3         string `json:"img3"`
 	Video        string `json:"video"`
 	Status       string `json:"status"`
-	CreatedDate  string `json:"createdDate"`
-	ModifiedDate string `json:"modifiedDate"`
+	CreatedAt  string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 //Add new categories
@@ -347,8 +348,8 @@ func (spc *GoldContract) AddCategory(ctx contractapi.TransactionContextInterface
 
 	category.DocType = "Category"
 	category.Status = "Active"
-	category.CreatedDate = dtformated
-	category.ModifiedDate = dtformated
+	category.CreatedAt = dtformated
+	category.UpdatedAt = dtformated
 
 	//convert Golang to jSon format (JSON Byte Array)
 	categoryBytes, err = json.Marshal(category)
@@ -375,8 +376,8 @@ type Variety struct {
 	Img3         string `json:"img3"`
 	Video        string `json:"videoPath"`
 	Status       string `json:"status"`
-	CreatedDate  string `json:"createdDate"`
-	ModifiedDate string `json:"modifiedDate"`
+	CreatedAt  string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 //Add new variety
@@ -402,8 +403,8 @@ func (spc *GoldContract) AddVariety(ctx contractapi.TransactionContextInterface,
 
 	variety.DocType = "Variety"
 	variety.Status = "Active"
-	variety.CreatedDate = dtformated
-	variety.ModifiedDate = dtformated
+	variety.CreatedAt = dtformated
+	variety.UpdatedAt = dtformated
 
 	//convert Golang to jSon format (JSON Byte Array)
 	varietyBytes, err = json.Marshal(variety)
@@ -431,8 +432,8 @@ type Charges struct {
 	Weight             string `json:"weight"`
 	DeleveryAgent      []User `json:"deleveryAgent"`
 	InstantGoldAppiled string `json:"instantGoldAppiled"`
-	CreatedDate        string `json:"createdDate"`
-	ModifiedDate       string `json:"modifiedDate"`
+	CreatedAt        string `json:"createdAt"`
+	UpdatedAt       string `json:"updatedAt"`
 }
 
 //Needs to discuss charges and charges
@@ -475,8 +476,8 @@ func (spc *GoldContract) AddCharges(ctx contractapi.TransactionContextInterface,
 
 	charges.DocType = "Charges"
 	charges.DeleveryAgent = agentArray
-	charges.CreatedDate = dtformated
-	charges.ModifiedDate = dtformated
+	charges.CreatedAt = dtformated
+	charges.UpdatedAt = dtformated
 
 	//convert Golang to jSon format (JSON Byte Array)
 	chargesBytes, err = json.Marshal(charges)
@@ -510,8 +511,8 @@ type Diamond struct {
 	Varieties         []Variety    `json:"varieties"`
 	Categories        []Category   `json:"categories"`
 	Collections       []Collection `json:"collections"`
-	CreatedDate       string       `json:"createdDate"`
-	ModifiedDate      string       `json:"modifiedDate"`
+	CreatedAt       string       `json:"createdAt"`
+	UpdatedAt      string       `json:"updatedAt"`
 }
 
 //Add new Diamond
@@ -607,8 +608,8 @@ type Calculation struct {
 	Type         string  `json:"type"`
 	Percentage   float64 `json:"percentage"`
 	Status       string  `json:"status"`
-	CreatedDate  string  `json:"createdDate"`
-	ModifiedDate string  `json:"modifiedDate"`
+	CreatedAt  string  `json:"createdAt"`
+	UpdatedAt string  `json:"updatedAt"`
 }
 
 //Add new calculation
@@ -638,8 +639,8 @@ func (spc *GoldContract) AddCalculation(ctx contractapi.TransactionContextInterf
 
 	calculation.DocType = "Calculation"
 	calculation.Status = "Active"
-	calculation.CreatedDate = dtformated
-	calculation.ModifiedDate = dtformated
+	calculation.CreatedAt = dtformated
+	calculation.UpdatedAt = dtformated
 
 	//convert Golang to jSon format (JSON Byte Array)
 	calculationBytes, err = json.Marshal(calculation)
@@ -667,8 +668,8 @@ type Plan struct {
 	Duration     string        `json:"duration"`
 	Bonus        string        `json:"bonus"`
 	CalcId       []Calculation `json:"calcId"`
-	CreatedDate  string        `json:"createdDate"`
-	ModifiedDate string        `json:"modifiedDate"`
+	CreatedAt  string        `json:"createdAt"`
+	UpdatedAt string        `json:"updatedAt"`
 }
 
 //Add Plan
@@ -744,28 +745,16 @@ func (spc *GoldContract) Plan(ctx contractapi.TransactionContextInterface, planD
 type BuySell struct {
 	DocType string       `json:"docType"`
 	Id      string       `json:"id"`
-	KT24    Buysellprice `json:"kt24"`
-	// KT22						struct {
-	// 	Buy 				string			`json:"buy"`
-	// 	Sell				string			`json:"sell"`
-	// } 				`json:"kt22"`
-	// KT18						struct {
-	// 	Buy 				string			`json:"buy"`
-	// 	Sell				string			`json:"sell"`
-	// } 				`json:"kt18"`
-	// KT14						struct {
-	// 	Buy 				string			`json:"buy"`
-	// 	Sell				string			`json:"sell"`
-	// } 				`json:"kt14"`
-	// KT10						struct {
-	// 	Buy 				string			`json:"buy"`
-	// 	Sell				string			`json:"sell"`
-	// } 				`json:"kt10"`
+	KT24   struct {
+		Buy  int `json:"buy"`
+		Sell int `json:"sell"`
+	} `json:"kt24"`
+	KT22    Buysellprice `json:"kt22"`
 }
 
 type Buysellprice struct {
-	Buy  string `json:"buy"`
-	Sell string `json:"sell"`
+	Buy  int 
+	Sell int
 }
 
 //Create Buy/Sell
@@ -777,7 +766,7 @@ func (spc *GoldContract) AddBuySell(ctx contractapi.TransactionContextInterface,
 
 	var buysell BuySell
 	err := json.Unmarshal([]byte(buysellData), &buysell)
-
+	fmt.Println(buysell)
 	buysellBytes, err := ctx.GetStub().GetState(buysell.Id)
 	fmt.Println("buysellData", buysell)
 	// if (buysell.Price24ktBuy == "" && buysell.Price24ktSell == ""){
@@ -792,7 +781,7 @@ func (spc *GoldContract) AddBuySell(ctx contractapi.TransactionContextInterface,
 	}
 
 	buysell.DocType = "BuySell"
-	buysell.KT24 = buysell.KT24
+	// buysell.KT24 = buysell.KT24
 	// buysell.KT22 = []Buysellprice{}
 	// buysell.KT18 = []Buysellprice{}
 	// buysell.KT14 = []Buysellprice{}
@@ -820,8 +809,8 @@ type Video struct {
 	Language     string `json:"language"`
 	Category     string `json:"category"`
 	Video        string `json:"video"`
-	CreatedDate  string `json:"createdDate"`
-	ModifiedDate string `json:"modifiedDate"`
+	CreatedAt  string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 //Add new Video
@@ -867,27 +856,30 @@ type Subscription struct {
 	DocType           string        `json:"docType"`
 	Id                string        `json:"id"`
 	User              string        `json:"user"`
-	Address           []Address     `json:"address"`
-	Installments      []Installment `json:"installment"`
-	Plan              []Plan        `json:"plan"`
+	AddressId		string			`json:"address"`
+	InstallmentId		string		`json:"installment"`
+	PlanId				string		`json:"plan"`
+	Address           []Address     `json:"addresses"`
+	Installments      []Installment `json:"installments"`
+	Plan              []Plan        `json:"plans"`
 	Status            string        `json:"status"`
 	UnpaidSkips       int           `json:"unpaidSkips"`
 	SkipCount         int           `json:"skipCount"`
 	UnpaidInvestments int           `json:"unpaidInvestments"`
-	CreatedDate       string        `json:"createdDate"`
-	ModifiedDate      string        `json:"modifiedDate"`
+	CreatedAt       	string        `json:"createdAt"`
+	UpdatedAt      		string        `json:"updatedAt"`
 	Custom            string        `json:"custom"`
-	CustomPlan        struct {
-		Name        string        `json:"name"`
-		Mode        string        `json:"mode"`
-		PlanType    string        `json:"planType"`
-		CyclePeriod []CyclePeriod `json:"cyclePeriod"`
-		Duration    string        `json:"duration"`
-	}
+	CustomPlan		[]CustomPlan	`json:"customPlan"`
 }
 
 //Custom Plan
-
+type CustomPlan struct {
+	Name        string        `json:"name"`
+	Mode        string        `json:"mode"`
+	PlanType    string        `json:"planType"`
+	CyclePeriod []CyclePeriod `json:"cyclePeriod"`
+	Duration    string        `json:"duration"`
+}
 //Create Subscription
 func (spc *GoldContract) AddSubscription(ctx contractapi.TransactionContextInterface, subscriptionData string) (*Subscription, error) {
 	if len(subscriptionData) == 0 {
@@ -910,7 +902,7 @@ func (spc *GoldContract) AddSubscription(ctx contractapi.TransactionContextInter
 	fmt.Println(subscription)
 
 	//Get Installment
-	queryStringInstallment := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "Installment", subscription.Installments)
+	queryStringInstallment := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "Installment", subscription.InstallmentId)
 
 	instaBytes, err := contract.GetQueryResult(ctx, queryStringInstallment)
 	if err != nil {
@@ -925,7 +917,7 @@ func (spc *GoldContract) AddSubscription(ctx contractapi.TransactionContextInter
 	}
 
 	//Get Address
-	queryStringAddress := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "Address", subscription.Address)
+	queryStringAddress := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "Address", subscription.AddressId)
 
 	addressBytes, err := contract.GetQueryResult(ctx, queryStringAddress)
 	if err != nil {
@@ -941,7 +933,7 @@ func (spc *GoldContract) AddSubscription(ctx contractapi.TransactionContextInter
 
 	//Get Plan -- for adding subscription
 	if subscription.Plan != nil {
-		queryStringPlan := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "Plan", subscription.Plan)
+		queryStringPlan := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "Plan", subscription.PlanId)
 
 		planBytes, err := contract.GetQueryResult(ctx, queryStringPlan)
 		if err != nil {
@@ -963,7 +955,8 @@ func (spc *GoldContract) AddSubscription(ctx contractapi.TransactionContextInter
 
 	if len(subscription.Custom) > 0 {
 		//Get CyclePeriod
-		queryStringCycle := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "CyclePeriod", subscription.CustomPlan.CyclePeriod)
+		var custom CustomPlan
+		queryStringCycle := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "CyclePeriod", custom.CyclePeriod)
 
 		cycleBytes, err := contract.GetQueryResult(ctx, queryStringCycle)
 		if err != nil {
@@ -976,7 +969,7 @@ func (spc *GoldContract) AddSubscription(ctx contractapi.TransactionContextInter
 		if err != nil {
 			return nil, err
 		}
-		subscription.CustomPlan.CyclePeriod = cycleArray
+		custom.CyclePeriod = cycleArray
 	}
 
 	subscription.DocType = "Subscription"
@@ -996,9 +989,11 @@ func (spc *GoldContract) AddSubscription(ctx contractapi.TransactionContextInter
 	}
 
 	//Update subscription to user record
-	queryStringUser := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "User", subscription.User)
+	// queryStringUser := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "User", subscription.User)
 
-	userBytes, err := contract.GetQueryResult(ctx, queryStringUser)
+	// userBytes, err := contract.GetQueryResult(ctx, queryStringUser)
+
+	userBytes, err := ctx.GetStub().GetState(subscription.User)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read data from world state: %v", err)
 	}
@@ -1033,8 +1028,8 @@ type Installment struct {
 	Bonus_Saved  string `json:"bonus_saved"`
 	Userid       string `json:"user_id"`
 	Collector    []User `json:"collector_id"`
-	CreatedDate  string `json:"createdDate"`
-	ModifiedDate string `json:"modifiedDate"`
+	CreatedAt  string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 //Create new Installment
@@ -1077,8 +1072,8 @@ func (spc *GoldContract) AddInstallment(ctx contractapi.TransactionContextInterf
 	installment.DocType = "Installment"
 	installment.Collector = agentArray
 
-	// bank.CreatedDate = dtformated
-	// bank.ModifiedDate = dtformated
+	// bank.CreatedAt = dtformated
+	// bank.UpdatedAt = dtformated
 
 	installmentBytes, err = json.Marshal(installment)
 	if err != nil {
@@ -1113,8 +1108,8 @@ type User struct {
 	Bank          []Bank         `json:"bank"`
 	Address       []Address      `json:"address"`
 	Subscriptions []Subscription `json:"subscription"`
-	CreatedDate   string         `json:"createdDate"`
-	ModifiedDate  string         `json:"modifiedDate"`
+	CreatedAt   string         `json:"createdAt"`
+	UpdatedAt  string         `json:"updatedAt"`
 }
 
 //Add new User
@@ -1138,6 +1133,10 @@ func (spc *GoldContract) AddUser(ctx contractapi.TransactionContextInterface, us
 	}
 
 	user.DocType = "User"
+	user.IsInvested = false
+	user.CreatedAt = dtformated
+	user.UpdatedAt = dtformated
+	
 
 	//convert Golang to jSon format (JSON Byte Array)
 	userBytes, err = json.Marshal(user)
@@ -1162,6 +1161,8 @@ type Role struct {
 	Role_Name   string       `json:"role_name"`
 	Permissions []Permission `json:"permissions"`
 	Status      string       `json:"status"`
+	CreatedAt   string         `json:"createdAt"`
+	UpdatedAt  string         `json:"updatedAt"`
 }
 
 //Add new Role
@@ -1200,7 +1201,7 @@ func (spc *GoldContract) AddRole(ctx contractapi.TransactionContextInterface, ro
 	}
 
 	role.DocType = "Role"
-	role.Status = "Active"
+	role.Status = "active"
 	role.Permissions = permissionArray
 
 	//convert Golang to jSon format (JSON Byte Array)
@@ -1224,6 +1225,8 @@ type Permission struct {
 	Id              string `json:"id"`
 	Permission_Name string `json:"permission_name"`
 	Status          string `json:"status"`
+	CreatedAt   string         `json:"createdAt"`
+	UpdatedAt  string         `json:"updatedAt"`
 }
 
 //Add new Permission
@@ -1271,6 +1274,8 @@ type Level struct {
 	Id         string  `json:"id"`
 	Name       string  `json:"name"`
 	Commission float64 `json:"commission"`
+	CreatedAt   string         `json:"createdAt"`
+	UpdatedAt  string         `json:"updatedAt"`
 }
 
 //Add new Label
@@ -1315,11 +1320,14 @@ func (spc *GoldContract) AddLevel(ctx contractapi.TransactionContextInterface, l
 type Address struct {
 	DocType          string `json:"docType"`
 	Id               string `json:"id"`
-	User             []User `json:"user"`
+	Userid             string `json:"user"`
 	Pin              string `json:"pin"`
 	Landmark         string `json:"landmark"`
+	AddressType		string	`json:"addressType"`
 	IsDefaultAddress string `json:"isDefaultAddress"`
 	Status           string `json:"status"`
+	CreatedAt   string         `json:"createdAt"`
+	UpdatedAt  string         `json:"updatedAt"`
 }
 
 //Add new Address
@@ -1346,9 +1354,9 @@ func (spc *GoldContract) AddAddress(ctx contractapi.TransactionContextInterface,
 
 	address.DocType = "Address"
 	address.Status = "active"
-
-	// bank.CreatedDate = dtformated
-	// bank.ModifiedDate = dtformated
+	address.AddressType = "Home"
+	address.CreatedAt = dtformated
+	address.UpdatedAt = dtformated
 
 	addressBytes, err = json.Marshal(address)
 	if err != nil {
@@ -1360,9 +1368,11 @@ func (spc *GoldContract) AddAddress(ctx contractapi.TransactionContextInterface,
 		return nil, err
 	}
 
-	queryStringUser := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "User", address.User)
+	// queryStringUser := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "User", address.User)
 
-	userBytes, err := contract.GetQueryResult(ctx, queryStringUser)
+	// userBytes, err := contract.GetQueryResult(ctx, queryStringUser)
+
+	userBytes, err := ctx.GetStub().GetState(address.Userid)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read data from world state: %v", err)
 	}
@@ -1374,7 +1384,6 @@ func (spc *GoldContract) AddAddress(ctx contractapi.TransactionContextInterface,
 	}
 
 	user.Address = append(user.Address, address)
-
 	userBytes, err = json.Marshal(user)
 	if err != nil {
 		return nil, err
@@ -1390,13 +1399,13 @@ func (spc *GoldContract) AddAddress(ctx contractapi.TransactionContextInterface,
 type Bank struct {
 	DocType      string `json:"docType"`
 	Id           string `json:"id"`
-	User         []User `json:"userId"`
+	User         string `json:"userId"`
 	AccountNum   string `json:"Accountnum"`
 	IFSC         string `json:"IFSC"`
 	Bank         string `json:"Bank"`
 	Branch       string `json:"Branch"`
-	CreatedDate  string `json:"createdDate"`
-	ModifiedDate string `json:"modifiedDate"`
+	CreatedAt  string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 //Add Bank Details
@@ -1422,9 +1431,8 @@ func (spc *GoldContract) AddBank(ctx contractapi.TransactionContextInterface, ba
 	fmt.Println(bank)
 
 	bank.DocType = "Bank"
-
-	// bank.CreatedDate = dtformated
-	// bank.ModifiedDate = dtformated
+	bank.CreatedAt = dtformated
+	bank.UpdatedAt = dtformated
 
 	bankBytes, err = json.Marshal(bank)
 	if err != nil {
@@ -1436,19 +1444,21 @@ func (spc *GoldContract) AddBank(ctx contractapi.TransactionContextInterface, ba
 		return nil, err
 	}
 
-	queryStringUser := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "User", bank.User)
+	//queryStringUser := fmt.Sprintf(`{"selector":{"docType":"%s","id":"%s"}}`, "User", bank.User)
 
-	userBytes, err := contract.GetQueryResult(ctx, queryStringUser)
+	userBytes, err := ctx.GetStub().GetState(bank.User)
+	//userBytes, err := contract.GetQueryResult(ctx, queryStringUser)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read data from world state: %v", err)
 	}
 
 	var user User
+	fmt.Println("line, 1451", user)
 	err = json.Unmarshal(userBytes, &user)
 	if err != nil {
-		return nil, fmt.Errorf("line 909: %v", err)
+		return nil, fmt.Errorf("line 1454: %v", err)
 	}
-
+	fmt.Println("line, 1456", user)
 	user.Bank = append(user.Bank, bank)
 
 	userBytes, err = json.Marshal(user)
@@ -1474,8 +1484,8 @@ type Transaction struct {
 	Charges            []Charges      `json:"charges"`
 	DeleveryAgent      []User         `json:"deleveryAgent"`
 	Subscription       []Subscription `json:"subscription"`
-	CreatedDate        string         `json:"createdDate"`
-	ModifiedDate       string         `json:"modifiedDate"`
+	CreatedAt        string         `json:"createdAt"`
+	UpdatedAt       string         `json:"updatedAt"`
 }
 
 //Add Ecom Transaction
@@ -1594,8 +1604,8 @@ type Appointment struct {
 	AppointmentTime string       `json:"appointmentTime"`
 	Status          string       `json:"status"`
 	StoreLocation   string       `json:"storeLocation"`
-	CreatedDate     string       `json:"createdDate"`
-	ModifiedDate    string       `json:"modifiedDate"`
+	CreatedAt     string       `json:"createdAt"`
+	UpdatedAt    string       `json:"updatedAt"`
 }
 
 //Add Appointment
@@ -1692,8 +1702,8 @@ type Item struct {
 	Name         string `json:"name"`
 	Images       string `json:"images"`
 	Video        string `json:"video"`
-	CreatedDate  string `json:"createdDate"`
-	ModifiedDate string `json:"modifiedDate"`
+	CreatedAt  string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 //Add new Item
@@ -1742,8 +1752,8 @@ type ItemDetail struct {
 	Products     []Product    `json:"product"`
 	Collections  []Collection `json:"collection"`
 	Categories   []Category   `json:"category"`
-	CreatedDate  string       `json:"createdDate"`
-	ModifiedDate string       `json:"modifiedDate"`
+	CreatedAt  string       `json:"createdAt"`
+	UpdatedAt string       `json:"updatedAt"`
 }
 
 //Add new ItemDetails
@@ -1855,8 +1865,8 @@ type Cart struct {
 	Id           string   `json:"id"`
 	Items        []string `json:"items"`
 	Userid       string   `json:"userid"`
-	CreatedDate  string   `json:"createdDate"`
-	ModifiedDate string   `json:"modifiedDate"`
+	CreatedAt  string   `json:"createdAt"`
+	UpdatedAt string   `json:"updatedAt"`
 }
 
 //Add Item to Cart

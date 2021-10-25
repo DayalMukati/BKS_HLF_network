@@ -5,7 +5,10 @@ You can use the `./network.sh` script to stand up a simple Fabric test network. 
 Before you can deploy the test network, you need to follow the instructions to [Install the Samples, Binaries and Docker Images](https://hyperledger-fabric.readthedocs.io/en/latest/install.html) in the Hyperledger Fabric documentation.
 
 ## Deploy chaincode
+./network.sh up createChannel -ca -s couchdb
 ./network.sh deployCC -ccn iac -ccl go -ccp ../chaincode -cci InitGold
+
+./network.sh deployCC -ccn iac -ccl javascript -ccp ../chaincode-js -cci InitGold
 
 ## Export path
 export PATH=${PWD}/../bin:$PATH
@@ -16,7 +19,7 @@ source ./scripts/setPeerConnectionParam.sh 1 2
 source ./scripts/setOrgPeerContext.sh 1
 
 ## Init chaincode
-peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C goldchannel -n iac $PEER_CONN_PARAMS -c '{"function":"InitGold","Args":[]}'
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C goldchannel -n iac $PEER_CONN_PARAMS -c '{"function":"InitLedger","Args":[]}'
 
 ## Create Metal
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C goldchannel -n iac $PEER_CONN_PARAMS -c '{"function":"AddMetal","Args":["Gold","abc.com"]}'

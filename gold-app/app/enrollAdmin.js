@@ -41,4 +41,4 @@ async function enrollGoldAdmin() {
 }
 
 module.exports = enrollGoldAdmin;
-// enrollHDFCAdmin();
+enrollHDFCAdmin();
