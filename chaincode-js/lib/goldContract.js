@@ -16,7 +16,7 @@ class GoldContract extends Contract {
 
 		const data = JSON.parse(args);
 		const metalId = data.id;
-		console.log("incoming asset fields: ", data);
+		console.log("incoming asset fields= ", data);
 
 		// Check if record already exits
 		var recordAsBytes = await this.GetAll(ctx, 'Metal');
@@ -42,32 +42,33 @@ class GoldContract extends Contract {
 		return metal;
 	}
 
+
 	//Add new Metal Group
 	async AddMetalGroup(ctx, args) {
 
 		const data = JSON.parse(args);
 		const metalgroupId = data.id;
-		console.log("incoming asset fields: ", data);
 
 		// Check if record already exits
 		var recordAsBytes = await this.GetAll(ctx, 'MetalGroup');
 		var records = JSON.parse(recordAsBytes.toString());
 		for (var i = 0; i < records.length; i++) {
-			if (records[i].name == data.name) {
-				console.log(records.length, i, "for loop")
-				throw new Error(`Error Message. MetalGroup with = ${data.name} already exists.`);
+			if (records[i].shortName == data.shortName) {
+				throw new Error(`Error Message. MetalGroup with = ${data.shortName} already exists.`);
 			}
 		}
-		//get metal data
-		var metalAsBytes = await ctx.stub.getState(data.metalId);
-		if (!metalAsBytes || metalAsBytes.length === 0) {
-			throw new Error(`${data.metalId} does not exist`);
-		}
 
-		const metals = [];
-		const result = JSON.parse(metalAsBytes.toString());
-		metals.push(result);
-		console.log(metals)
+		const metals = await Promise.all(
+			data.metals.map(async metalId => {
+				var metalAsBytes = await ctx.stub.getState(metalId);
+				if (!metalAsBytes || metalAsBytes.length === 0) {
+					return null
+				}
+				const result = JSON.parse(metalAsBytes.toString());
+				return result;
+			})
+		);
+
 		let metalgroup = {
 			docType: 'MetalGroup',
 			id: metalgroupId,
@@ -81,7 +82,6 @@ class GoldContract extends Contract {
 		};
 
 		// === Save asset to state ===
-		console.log(JSON.stringify(metalgroup));
 		await ctx.stub.putState(metalgroupId, Buffer.from(JSON.stringify(metalgroup)));
 		return metalgroup;
 	}
@@ -387,7 +387,7 @@ class GoldContract extends Contract {
 	}
 
 	//Add Video
-	async AddVideo(ctx, args){
+	async AddVideo(ctx, args) {
 		const data = JSON.parse(args);
 		const videoId = data.id;
 		console.log("incoming asset fields: ", data);
@@ -409,42 +409,32 @@ class GoldContract extends Contract {
 	}
 
 	//Add User
-	async AddUser(ctx, args){
+	async AddUser(ctx, args) {
 		const data = JSON.parse(args);
 		const userId = data.id;
 		console.log("incoming asset fields: ", data);
 
-		// Check if record already exits
-		var recordAsBytes = await this.GetAll(ctx, 'User');
-		var records = JSON.parse(recordAsBytes.toString());
-		for (var i = 0; i < records.length; i++) {
-			if (records[i].mobile == data.mobile) {
-				console.log(records.length, i, "for loop")
-				throw new Error(`Error Message. Metal Period with = ${data.mobile} already exists.`);
-			}
-		}
-
 		let user = {
 			docType: 'User',
 			id: userId,
-			fname: data.fname,
-			email: data.email,
+			fname: data.fname || '',
+			email: data.email || '',
 			mobile: data.mobile,
-			dob: data.dob,
-			pan: data.pan,
+			dob: data.dob || '',
+			pan: data.pan || '',
 			isWhatsapp: data.isWhatsapp,
-			role: data.role,
+			role: data.role || '',
 			addresses: [],
 			isInvested: data.isInvested || false,
-			image: data.image,
-			referral: data.referral,
-			referenceType: data.referenceType,
+			image: data.image || '',
+			referral: data.referral || '',
+			referenceType: data.referenceType || '',
 			refCode: data.refCode || '',
 			GBPcode: data.GBPcode || '',
 			referralBonusEntries: data.referralBonusEntries || [],
 			GBPBonusEntries: data.GBPBonusEntries || [],
 			joiningBonus: data.joiningBonus || 0,
-			level: data.level,
+			level: data.level || '',
 			deviceToken: data.deviceToken || '',
 			createdAt: ctx.stub.getDateTimestamp(),
 			updatedAt: ctx.stub.getDateTimestamp()
@@ -457,7 +447,7 @@ class GoldContract extends Contract {
 	}
 
 	//Add Installment
-	async AddInstallment(ctx, args){
+	async AddInstallment(ctx, args) {
 		const data = JSON.parse(args);
 		const installmentId = data.id;
 		console.log("incoming asset fields: ", data);
@@ -477,12 +467,12 @@ class GoldContract extends Contract {
 			updatedAt: ctx.stub.getDateTimestamp()
 		}
 
-			// === Save asset to state ===
-			await ctx.stub.putState(installmentId, Buffer.from(JSON.stringify(installment)));
-			return installment;
+		// === Save asset to state ===
+		await ctx.stub.putState(installmentId, Buffer.from(JSON.stringify(installment)));
+		return installment;
 	}
 	//Add Subscription
-	async AddSubscription(ctx, args){
+	async AddSubscription(ctx, args) {
 		const data = JSON.parse(args);
 		const subscriptionId = data.id;
 		console.log("incoming asset fields: ", data);
@@ -515,7 +505,7 @@ class GoldContract extends Contract {
 	}
 
 	//Add Referral Bonus
-	async AddReferralBonus(ctx, args){
+	async AddReferralBonus(ctx, args) {
 		const data = JSON.parse(args);
 		const referralId = data.id;
 
@@ -537,7 +527,7 @@ class GoldContract extends Contract {
 	}
 
 	//Add Address
-	async AddAddress(ctx, args){
+	async AddAddress(ctx, args) {
 		const data = JSON.parse(args);
 		const addressId = data.id;
 
@@ -548,18 +538,11 @@ class GoldContract extends Contract {
 		}
 
 		let userData = JSON.parse(userAsBytes.toString());
-		const userdetails = {
-			fname: userData.fname,
-			email: userData.email,
-			id: userData.id,
-			mobile: userData.mobile
-		}
-		console.log(userData, "User Data")
 
 		let address = {
 			docType: "Address",
 			id: addressId,
-			user: userdetails,
+			user: data.user,
 			addressType: data.addressType || "Home",
 			isDefaultAddress: data.isDefaultAddress || false,
 			status: data.status,
@@ -572,16 +555,15 @@ class GoldContract extends Contract {
 		//=== Save asset to state ===
 		console.log(JSON.stringify(address));
 		await ctx.stub.putState(addressId, Buffer.from(JSON.stringify(address)));
-		let addresses = [];
-		userData.addresses = [...addresses, address]
-		console.log(addresses, userData)
+		userData.addresses.push(address);
+		console.log(userData.addresses);
 		await ctx.stub.putState(data.user, Buffer.from(JSON.stringify(userData)));
 
-		return address;
+		return {address, userData};
 	}
 
 	//Add Bank
-	async AddBank(ctx, args){
+	async AddBank(ctx, args) {
 		const data = JSON.parse(args);
 		const bankId = data.id;
 
@@ -609,15 +591,14 @@ class GoldContract extends Contract {
 		//=== Save asset to state ===
 		console.log(JSON.stringify(bank));
 		await ctx.stub.putState(bankId, Buffer.from(JSON.stringify(bank)));
-		userData.banks = [...banks, bank]
-		console.log(addresses, userData)
+		userData.banks.push(bank);
 		await ctx.stub.putState(data.user, Buffer.from(JSON.stringify(userData)));
 
-		return bank;
+		return {bank, userData};
 	}
 
 	//Create Oppointment
-	async CreateOppointment(ctx, args){
+	async CreateOppointment(ctx, args) {
 		const data = JSON.parse(args);
 		const oppointmentId = data.id;
 
@@ -684,7 +665,7 @@ class GoldContract extends Contract {
 	}
 
 	//Add Item
-	async AddItem(ctx, args){
+	async AddItem(ctx, args) {
 		const data = JSON.parse(args);
 		const itemId = data.id;
 
@@ -705,12 +686,28 @@ class GoldContract extends Contract {
 	}
 
 	//Add Item Details
-	async AddItemdetails(ctx, args){
+	async AddItemdetails(ctx, args) {
+		const data = JSON.parse(args);
+		const itemdetailId = data.id;
 
+		let item = {
+			docType: "ItemDetail",
+			id: itemdetailId,
+			name: data.name,
+			images: data.images,
+			video: data.video,
+			createdAt: ctx.stub.getDateTimestamp(),
+			updatedAt: ctx.stub.getDateTimestamp()
+		}
+
+		//=== Save asset to state ===
+		console.log(JSON.stringify(item));
+		await ctx.stub.putState(itemId, Buffer.from(JSON.stringify(item)));
+		return item;
 	}
 
 	//Add Level
-	async AddLevel(ctx, args){
+	async AddLevel(ctx, args) {
 		const data = JSON.parse(args);
 		const levelId = data.id;
 
@@ -730,7 +727,7 @@ class GoldContract extends Contract {
 	}
 
 	//Add permission
-	async AddPermission(ctx, args){
+	async AddPermission(ctx, args) {
 		const data = JSON.parse(args);
 		const permissionId = data.id;
 
@@ -749,8 +746,28 @@ class GoldContract extends Contract {
 		return permission;
 	}
 
+	//Add Role
+	async AddRole(ctx, args) {
+		const data = JSON.parse(args);
+		const roleId = data.id;
+
+		let role = {
+			docType: "Role",
+			id: roleId,
+			role_name: data.role_name,
+			permissions: data.permissions,
+			status: data.status || "active",
+			createdAt: ctx.stub.getDateTimestamp(),
+			updatedAt: ctx.stub.getDateTimestamp()
+		}
+
+		//=== Save asset to state ===
+		console.log(JSON.stringify(role));
+		await ctx.stub.putState(roleId, Buffer.from(JSON.stringify(role)));
+		return role;
+	}
 	//Add Pincode
-	async AddPincode(ctx, args){
+	async AddPincode(ctx, args) {
 		const data = JSON.parse(args);
 		const pincodeId = data.id;
 
@@ -767,8 +784,42 @@ class GoldContract extends Contract {
 		await ctx.stub.putState(pincodeId, Buffer.from(JSON.stringify(pincode)));
 		return pincode;
 	}
+
+	//Create Wallet
+	async CreateWallet(ctx, args) {
+		const data = JSON.parse(args);
+		const walletId = data.id;
+
+		//get user data
+		var userAsBytes = await ctx.stub.getState(data.user);
+		if (!userAsBytes || userAsBytes.length === 0) {
+			throw new Error(`${data.user} does not exist`);
+		}
+
+		let userData = JSON.parse(userAsBytes.toString());
+		console.log(userData, "User Data")
+
+		let wallet = {
+			docType: "Wallet",
+			id: walletId,
+			user: data.user,
+			gold: data.gold,
+			transactions: data.transactions,
+			status: data.status,
+			bank: data.bank,
+			requsetId: data.requsetId,
+			createdAt: ctx.stub.getDateTimestamp(),
+			updatedAt: ctx.stub.getDateTimestamp()
+
+		}
+		//=== Save asset to state ===
+		console.log(JSON.stringify(wallet));
+		await ctx.stub.putState(walletId, Buffer.from(JSON.stringify(wallet)));
+		return wallet;
+	}
+
 	//Create Order
-	async CreateOrder(ctx, args){
+	async CreateOrder(ctx, args) {
 		const data = JSON.parse(args);
 		const orderId = data.id;
 
@@ -799,7 +850,7 @@ class GoldContract extends Contract {
 	}
 
 	//Create Order Type
-	async CreateOrderType(ctx, args){
+	async CreateOrderType(ctx, args) {
 		const data = JSON.parse(args);
 		const orderTypeId = data.id;
 
@@ -818,22 +869,7 @@ class GoldContract extends Contract {
 		return ordertype;
 	}
 
-	//Update user
-	async UpdateUser(ctx, args){
-		const data = JSON.parse(args);
-		
-		let userAsBytes = await ctx.stub.getState(data.id)
-		if (!userAsBytes || userAsBytes.length === 0) {
-            throw new Error(`${data.id} does not exist`);
-        }
-        const user = JSON.parse(userAsBytes.toString());
-		user.isInvested = data.isInvested;
-		user.joiningBonus = data.joiningBonus;
-
-        await ctx.stub.putState(data.id, Buffer.from(JSON.stringify(user)));
-        console.info('============= END : Update User ===========');
-	}
-//---------------------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------------------
 	//Get by Id
 	async GetbyId(ctx, id, docType) {
 		let queryString = {};
@@ -896,14 +932,246 @@ class GoldContract extends Contract {
 	}
 
 	//Delete record from world state
-	async DeleteAsset(ctx, id){
+	async DeleteAsset(ctx, id) {
 		console.info('============= deleteRecord ===========');
-        if (id.length < 1) {
-            throw new Error('Asset Id required as input')
-        }
-        console.log("Id = " + id);
+		if (id.length < 1) {
+			throw new Error('Asset Id required as input')
+		}
+		console.log("Id = " + id);
 
 		await ctx.stub.deleteState(id); //remove the asset from chaincode state
+	}
+
+//-------------------------------------------------------------------------------------------------------
+	//Updates functions 
+
+	//Update Metal
+	async UpdateMetal(ctx, args) {
+		const data = JSON.parse(args);
+
+		let metalAsBytes = await ctx.stub.getState(data.id)
+		if (!metalAsBytes || metalAsBytes.length === 0) {
+			throw new Error(`${data.id} does not exist`);
+		}
+		const metal = JSON.parse(metalAsBytes.toString());
+
+		metal.name = data.name,
+		metal.icon = data.icon
+		metal.updatedAt = ctx.stub.getDateTimestamp()
+
+		//update data to state database
+		await ctx.stub.putState(data.id, Buffer.from(JSON.stringify(metal)));
+		return metal;
+	}
+
+	//Update MetalGroup
+	async UpdateMetalGroup(ctx, args) {
+		const data = JSON.parse(args);
+
+		let metalgroupAsBytes = await ctx.stub.getState(data.id)
+		if (!metalgroupAsBytes || metalgroupAsBytes.length === 0) {
+			throw new Error(`${data.id} does not exist`);
+		}
+		const metalgroup = JSON.parse(metalgroupAsBytes.toString());
+
+		const metals = await Promise.all(
+			data.metals.map(async metalId => {
+				var metalAsBytes = await ctx.stub.getState(metalId);
+				if (!metalAsBytes || metalAsBytes.length === 0) {
+					return null
+				}
+				const result = JSON.parse(metalAsBytes.toString());
+				return result;
+			})
+		);
+		
+		metalgroup.shortName = data.shortName,
+		metalgroup.karatage = data.karatage,
+		metalgroup.fineness = data.fineness,
+		metalgroup.referenceId = data.referenceId,
+		metalgroup.metals = metals,
+		metalgroup.updatedAt = ctx.stub.getDateTimestamp()
+
+		//update data to state database
+		await ctx.stub.putState(data.id, Buffer.from(JSON.stringify(metalgroup)));
+		return metalgroup;
+	}
+	//Update CyclePeriod
+	async UpdateCyclePeriod(ctx, args) {
+		const data = JSON.parse(args);
+
+		let cycleAsBytes = await ctx.stub.getState(data.id)
+		if (!cycleAsBytes || cycleAsBytes.length === 0) {
+			throw new Error(`${data.id} does not exist`);
+		}
+		const cycle = JSON.parse(cycleAsBytes.toString());
+
+		cycle.name = data.name,
+		cycle.graceperiod = data.graceperiod,
+		cycle.minValue = data.minValue,
+		cycle.minWeight = data.minWeight,
+		cycle.shortName = data.shortName,
+		cycle.cycle = data.cycle,
+		cycle.status = data.status,
+		cycle.updatedAt = ctx.stub.getDateTimestamp()
+
+		//update data to state database
+		await ctx.stub.putState(data.id, Buffer.from(JSON.stringify(cycle)));
+		return cycle;
+	}
+
+	//Update Product
+	async UpdateProduct(ctx, args) {
+		const data = JSON.parse(args);
+
+		let productAsBytes = await ctx.stub.getState(data.id)
+		if (!productAsBytes || productAsBytes.length === 0) {
+			throw new Error(`${data.id} does not exist`);
+		}
+		const product = JSON.parse(productAsBytes.toString());
+
+		product.name = data.name,
+		product.images = data.images,
+		product.video = data.video,
+		product.updatedAt = ctx.stub.getDateTimestamp()
+
+		//update data to state database
+		await ctx.stub.putState(data.id, Buffer.from(JSON.stringify(product)));
+		return product;
+	}
+
+	//Update Calculation
+	async UpdateCalculation(ctx, args) {
+		const data = JSON.parse(args);
+
+		let calculationAsBytes = await ctx.stub.getState(data.id)
+		if (!calculationAsBytes || calculationAsBytes.length === 0) {
+			throw new Error(`${data.id} does not exist`);
+		}
+		const calculation = JSON.parse(calculationAsBytes.toString());
+
+		calculation.Type = data.Type,
+		calculation.Percentage = data.Percentage,
+		calculation.status = data.status,
+		calculation.updatedAt = ctx.stub.getDateTimestamp()
+
+		//update data to state database
+		await ctx.stub.putState(data.id, Buffer.from(JSON.stringify(calculation)));
+		return calculation;
+	}
+
+	//Update BuySell
+	async UpdateBuySell(ctx, args) {
+		const data = JSON.parse(args);
+
+		let buysellAsBytes = await ctx.stub.getState(data.id)
+		if (!buysellAsBytes || buysellAsBytes.length === 0) {
+			throw new Error(`${data.id} does not exist`);
+		}
+		const buysell = JSON.parse(buysellAsBytes.toString());
+
+		buysell.buy = data.buy,
+		buysell.sell = data.sell,
+		buysell.updatedAt = ctx.stub.getDateTimestamp()
+
+		//update data to state database
+		await ctx.stub.putState(data.id, Buffer.from(JSON.stringify(buysell)));
+		return buysell;
+	}
+
+	//Update Video
+	async UpdateVideo(ctx, args) {
+		const data = JSON.parse(args);
+
+		let videoAsBytes = await ctx.stub.getState(data.id)
+		if (!videoAsBytes || videoAsBytes.length === 0) {
+			throw new Error(`${data.id} does not exist`);
+		}
+		const video = JSON.parse(videoAsBytes.toString());
+
+		video.video = data.video,
+		video.language = data.language,
+		video.category = data.category,
+		video.updatedAt = ctx.stub.getDateTimestamp()
+
+		//update data to state database
+		await ctx.stub.putState(data.id, Buffer.from(JSON.stringify(video)));
+		return video;
+	}
+	//Update user
+	async UpdateUser(ctx, args) {
+		const data = JSON.parse(args);
+
+		let userAsBytes = await ctx.stub.getState(data.id)
+		if (!userAsBytes || userAsBytes.length === 0) {
+			throw new Error(`${data.id} does not exist`);
+		}
+		const user = JSON.parse(userAsBytes.toString());
+
+			user.fname = data.fname,
+			user.email = data.email,
+			user.dob = data.dob,
+			user.pan = data.pan,
+			user.role = data.role,
+			user.addresses = [],
+			user.isInvested = data.isInvested,
+			user.image = data.image,
+			user.referral = data.referral,
+			user.referenceType = data.referenceType,
+			user.refCode = data.refCode,
+			user.GBPcode = data.GBPcode,
+			user.referralBonusEntries = data.referralBonusEntries,
+			user.GBPBonusEntries = data.GBPBonusEntries,
+			user.joiningBonus = data.joiningBonus,
+			user.level = data.level,
+			user.deviceToken = data.deviceToken,
+			user.updatedAt = ctx.stub.getDateTimestamp()
+			user.isInvested = data.isInvested;
+			user.joiningBonus = data.joiningBonus;
+
+		await ctx.stub.putState(data.id, Buffer.from(JSON.stringify(user)));
+		const result = await ctx.stub.getState(data.id);
+		const updatedData = JSON.parse(result.toString());
+		return updatedData;
+		console.info('============= END : Update User ===========');
+	}
+
+	//Update Pincode
+	async UpdatePincode(ctx, args) {
+		const data = JSON.parse(args);
+
+		let pinAsBytes = await ctx.stub.getState(data.id)
+		if (!pinAsBytes || pinAsBytes.length === 0) {
+			throw new Error(`${data.id} does not exist`);
+		}
+		const pincode = JSON.parse(pinAsBytes.toString());
+
+		pincode.pin_number = data.pin_number
+		pincode.updatedAt = ctx.stub.getDateTimestamp()
+
+		//update data to state database
+		await ctx.stub.putState(data.id, Buffer.from(JSON.stringify(pincode)));
+		return pincode;
+	}
+
+	//Update Item
+	async UpdatePItem(ctx, args) {
+		const data = JSON.parse(args);
+
+		let itemAsBytes = await ctx.stub.getState(data.id)
+		if (!itemAsBytes || itemAsBytes.length === 0) {
+			throw new Error(`${data.id} does not exist`);
+		}
+		const item = JSON.parse(itemAsBytes.toString());
+
+		item.name = data.name,
+		item.images = data.images,
+		item.video = data.video,
+		item.updatedAt = ctx.stub.getDateTimestamp()
+
+		//update data to state database
+		await ctx.stub.putState(data.id, Buffer.from(JSON.stringify(item)));
+		return item;
 	}
 }
 
